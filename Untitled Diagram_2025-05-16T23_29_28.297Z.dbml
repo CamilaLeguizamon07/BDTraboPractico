@@ -1,0 +1,116 @@
+Table clientes {
+	id_cliente integer [ pk, increment, not null, unique ]
+	nom_cliente varchar [ not null ]
+	apell_cliente varchar [ not null ]
+	nro_cedula integer [ not null ]
+	telef_cliente varchar [ not null ]
+	email_cliente varchar [ not null ]
+	direccion text
+}
+
+Table proveedores {
+	id_proveedor integer [ pk, increment, not null, unique ]
+	nom_proveedor varchar [ not null ]
+	ruc varchar [ not null ]
+	telef_proveedor varchar
+	email_proveedor varchar
+	direc_proveedor text
+}
+
+Table categoria {
+	id_categoria integer [ pk, increment, not null, unique ]
+	nom_categoria varchar [ not null ]
+	des_categoria text
+}
+
+Table piezas {
+	id_pieza integer [ pk, increment, not null, unique ]
+	nom_pieza varchar [ not null ]
+	des_pieza varchar [ not null ]
+	precio_venta integer [ not null ]
+	precio_compra integer [ not null ]
+	stock integer [ not null ]
+	id_categoria integer [ pk, not null ]
+	id_proveedor integer [ pk, not null ]
+}
+
+Table ventas {
+	id_venta integer [ pk, increment, not null, unique ]
+	fecha date [ not null ]
+	id_cliente integer [ pk, not null ]
+	id_usuario integer [ pk, not null ]
+	total_venta integer [ not null ]
+}
+
+Table detalle_venta {
+	id_detalle integer [ pk, increment, not null, unique ]
+	id_venta integer [ pk, not null ]
+	id_pieza integer [ pk, not null ]
+	cant_venta integer [ not null ]
+	pre_unit_venta integer [ not null ]
+}
+
+Table compras {
+	id_compra integer [ pk, increment, not null, unique ]
+	fecha date [ not null ]
+	id_proveedor integer [ pk, not null ]
+	id_usuario integer [ pk, not null ]
+	total_compra integer [ not null ]
+}
+
+Table detalle_compra {
+	id_detalle integer [ pk, increment, not null, unique ]
+	id_compra integer [ pk, not null ]
+	id_pieza integer [ pk, not null ]
+	cant_compra integer [ not null ]
+	pre_unit_compra integer [ not null ]
+}
+
+Table usuario {
+	id_usuario integer [ pk, increment, not null, unique ]
+	nom_usuario varchar [ not null ]
+	apell_usuario varchar [ not null ]
+	usuario varchar [ not null, unique ]
+	contraseñ varchar [ not null, unique ]
+	rol varchar
+}
+
+Ref fk_clientes_id_cliente_ventas {
+	clientes.id_cliente < ventas.id_cliente [ delete: restrict, update: cascade ]
+}
+
+Ref fk_ventas_id_venta_detalle_venta {
+	ventas.id_venta < detalle_venta.id_venta [ delete: restrict, update: cascade ]
+}
+
+Ref fk_detalle_venta_id_pieza_piezas {
+	detalle_venta.id_pieza > piezas.id_pieza [ delete: cascade, update: cascade ]
+}
+
+Ref fk_piezas_id_categoria_categoria {
+	piezas.id_categoria > categoria.id_categoria [ delete: no action, update: no action ]
+}
+
+Ref fk_ventas_id_usuario_usuario {
+	ventas.id_usuario > usuario.id_usuario [ delete: restrict, update: cascade ]
+}
+
+Ref fk_piezas_id_proveedor_proveedores {
+	piezas.id_proveedor > proveedores.id_proveedor [ delete: no action, update: no action ]
+}
+
+Ref fk_compras_id_proveedor_proveedores {
+	compras.id_proveedor > proveedores.id_proveedor [ delete: no action, update: no action ]
+}
+
+Ref fk_compras_id_compra_detalle_compra {
+	compras.id_compra < detalle_compra.id_compra [ delete: no action, update: no action ]
+}
+
+Ref fk_piezas_id_pieza_detalle_compra {
+	piezas.id_pieza < detalle_compra.id_pieza [ delete: no action, update: no action ]
+}
+
+Ref fk_usuario_id_usuario_compras {
+	usuario.id_usuario < compras.id_usuario [ delete: restrict, update: cascade ]
+}
